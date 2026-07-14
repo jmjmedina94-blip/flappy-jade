@@ -55,5 +55,6 @@ Mute first (`muteBtn.click()`) or the pump schedules a burst of WebAudio tones.
 
 menu → START → get-ready → first tap → score 10+ (level toast + palette fade) → die →
 game-over panel (New Best banner only when score > stored best; buttons unlock after 550ms) →
-RETRY / MENU → reset high score (two-tap confirm). localStorage keys: `fj_best`, `fj_bestLevel`, `fj_muted`.
+RETRY / MENU → reset high score (two-tap confirm). Character chips on the menu (Jade/Darling) swap the
+canvas bird live; cosmetic only. localStorage keys: `fj_best`, `fj_bestLevel`, `fj_muted`, `fj_char`.
 Portrait: `resize_window` mobile → overlay + `blocked`; back to desktop → screenshot (deferred resize!) → `awaitResume` → tap resumes.

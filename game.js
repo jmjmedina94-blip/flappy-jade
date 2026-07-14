@@ -42,6 +42,20 @@ const PALETTES = [
     cloud:'#a48fd0', groundTop:'#8a68b8', groundBot:'#5e4590', scallop:'#a888d0', heart:'#d9a8ff', star:1 },
 ];
 
+/* ─── Playable characters (cosmetic only — same physics & hitbox) ─── */
+const CHARS = {
+  jade: {
+    bodyTop: '#ffb3d6', bodyBot: '#f06ba8', outline: 'rgba(150,40,100,0.35)',
+    belly: '#ffdcec', wing: '#e0559d', tail: '#e061a4',
+    blush: 'rgba(255,120,170,0.4)', lashes: true, crown: 'tiara',
+  },
+  darling: {
+    bodyTop: '#a8d6ff', bodyBot: '#5f8fe6', outline: 'rgba(40,80,150,0.4)',
+    belly: '#ddeeff', wing: '#4a7fd6', tail: '#4d82dd',
+    blush: 'rgba(255,130,170,0.3)', lashes: false, crown: 'crown',
+  },
+};
+
 /* ─── Small helpers ─── */
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 const lerp = (a, b, t) => a + (b - a) * t;
@@ -127,6 +141,7 @@ const startBtn = el('startBtn'), retryBtn = el('retryBtn'), menuBtn = el('menuBt
 const resetBtn = el('resetBtn'), muteBtn = el('muteBtn'), menuBest = el('menuBest');
 const finalScore = el('finalScore'), finalBest = el('finalBest'), finalLevel = el('finalLevel');
 const newBestBanner = el('newBestBanner');
+const pickJade = el('pickJade'), pickDarling = el('pickDarling');
 
 /* ─── Game state ─── */
 let state = 'menu';          // 'menu' | 'play' | 'over'
@@ -137,6 +152,8 @@ let blocked = false;         // portrait orientation blocks everything
 let score = 0, level = 1;
 let best = store.get('fj_best', 0);
 let bestLevel = store.get('fj_bestLevel', 1);
+let selChar = store.get('fj_char', 'jade');
+if (!CHARS[selChar]) selChar = 'jade';
 let newBest = false;
 let speed = 90, speedTarget = TUNE.speedStart;
 let scrollX = 0;             // world scroll for parallax layers
@@ -455,7 +472,7 @@ function update(dt) {
   if (state === 'menu') {
     scrollX += 55 * dt;
     bird.x += (W * 0.52 - bird.x) * Math.min(1, dt * 5);
-    bird.y = BIRD_BASE_Y + Math.sin(time * 2.6) * 10;
+    bird.y = H * 0.48 + Math.sin(time * 2.6) * 10;   // below the character chips
     bird.rot = Math.sin(time * 2.6 + 1.2) * 0.08;
     bird.flapAnim = Math.max(0, bird.flapAnim - dt * 2.6);
     return;
@@ -748,6 +765,7 @@ function drawGround() {
   ctx.fillRect(0, GROUND_Y - 2, W, 3);
 }
 function drawBird() {
+  const C = CHARS[selChar];
   const wingA = bird.flapAnim > 0
     ? Math.sin(bird.flapAnim * Math.PI * 3.5) * 0.9
     : Math.sin(time * 6) * 0.25;
@@ -755,22 +773,22 @@ function drawBird() {
   ctx.translate(bird.x, bird.y);
   ctx.rotate(bird.rot);
   // tail feathers
-  ctx.fillStyle = '#e061a4';
+  ctx.fillStyle = C.tail;
   ctx.beginPath(); ctx.moveTo(-14, -3); ctx.lineTo(-27, -9); ctx.lineTo(-17, 2); ctx.closePath(); ctx.fill();
   ctx.beginPath(); ctx.moveTo(-14, 2); ctx.lineTo(-28, 1); ctx.lineTo(-15, 8); ctx.closePath(); ctx.fill();
   // body
   const bg = ctx.createLinearGradient(0, -20, 0, 20);
-  bg.addColorStop(0, '#ffb3d6');
-  bg.addColorStop(1, '#f06ba8');
+  bg.addColorStop(0, C.bodyTop);
+  bg.addColorStop(1, C.bodyBot);
   ctx.fillStyle = bg;
   ctx.beginPath();
   ctx.ellipse(0, 0, 21, 17, 0, 0, 6.28);
   ctx.fill();
-  ctx.strokeStyle = 'rgba(150,40,100,0.35)';
+  ctx.strokeStyle = C.outline;
   ctx.lineWidth = 2;
   ctx.stroke();
   // belly
-  ctx.fillStyle = '#ffdcec';
+  ctx.fillStyle = C.belly;
   ctx.beginPath();
   ctx.ellipse(3, 7, 12, 8, -0.2, 0, 6.28);
   ctx.fill();
@@ -778,7 +796,7 @@ function drawBird() {
   ctx.save();
   ctx.translate(-3, 1);
   ctx.rotate(-wingA);
-  ctx.fillStyle = '#e0559d';
+  ctx.fillStyle = C.wing;
   ctx.beginPath();
   ctx.ellipse(-7, 0, 11, 6.5, 0.15, 0, 6.28);
   ctx.fill();
@@ -805,14 +823,20 @@ function drawBird() {
   ctx.beginPath(); ctx.arc(9.4, -5.6, 2.7, 0, 6.28); ctx.fill();
   ctx.fillStyle = '#fff';
   ctx.beginPath(); ctx.arc(10.3, -6.6, 1, 0, 6.28); ctx.fill();
-  ctx.strokeStyle = '#3a2434';
-  ctx.lineWidth = 1.4;
-  ctx.lineCap = 'round';
-  ctx.beginPath(); ctx.moveTo(4.5, -10.5); ctx.lineTo(2.2, -12.5); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(6.5, -11.8); ctx.lineTo(5.2, -14.2); ctx.stroke();
-  ctx.fillStyle = 'rgba(255,120,170,0.4)';
+  if (C.lashes) {
+    ctx.strokeStyle = '#3a2434';
+    ctx.lineWidth = 1.4;
+    ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(4.5, -10.5); ctx.lineTo(2.2, -12.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(6.5, -11.8); ctx.lineTo(5.2, -14.2); ctx.stroke();
+  }
+  ctx.fillStyle = C.blush;
   ctx.beginPath(); ctx.ellipse(12, 1.5, 3.6, 2.4, 0, 0, 6.28); ctx.fill();
-  // 👑 tiara
+  // 👑 headwear
+  if (C.crown === 'tiara') drawTiara(); else drawCrown();
+  ctx.restore();
+}
+function drawTiara() {
   ctx.save();
   ctx.translate(-2, -15);
   ctx.rotate(-0.08);
@@ -844,6 +868,40 @@ function drawBird() {
   ctx.fillStyle = '#ff8fc0';
   ctx.beginPath(); ctx.arc(-1.5, 1, 1.4, 0, 6.28); ctx.fill();
   ctx.restore();
+}
+function drawCrown() {
+  ctx.save();
+  ctx.translate(-2, -14);
+  ctx.rotate(-0.04);
+  const gold = ctx.createLinearGradient(0, -15, 0, 2);
+  gold.addColorStop(0, '#ffe89a');
+  gold.addColorStop(1, '#f0b23c');
+  ctx.fillStyle = gold;
+  ctx.strokeStyle = '#c98a24';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();                 // three-point king crown
+  ctx.moveTo(-10, -3);
+  ctx.lineTo(-10, -12);
+  ctx.lineTo(-5.5, -6.5);
+  ctx.lineTo(-1, -14);
+  ctx.lineTo(3.5, -6.5);
+  ctx.lineTo(8, -12);
+  ctx.lineTo(8, -3);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  rr(-11, -3.5, 20, 5.5, 2);       // band
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#ffd166';       // gold balls on the tips
+  ctx.beginPath(); ctx.arc(-10, -12.5, 1.6, 0, 6.28); ctx.fill();
+  ctx.beginPath(); ctx.arc(-1, -14.5, 1.8, 0, 6.28); ctx.fill();
+  ctx.beginPath(); ctx.arc(8, -12.5, 1.6, 0, 6.28); ctx.fill();
+  ctx.fillStyle = '#ff4d6d';       // ruby center
+  ctx.beginPath(); ctx.arc(-1, -0.8, 1.7, 0, 6.28); ctx.fill();
+  ctx.fillStyle = '#7ec8ff';       // sapphires
+  ctx.beginPath(); ctx.arc(-7, -0.8, 1.3, 0, 6.28); ctx.fill();
+  ctx.beginPath(); ctx.arc(5, -0.8, 1.3, 0, 6.28); ctx.fill();
   ctx.restore();
 }
 function drawParticles() {
@@ -940,6 +998,22 @@ resetBtn.addEventListener('click', () => {
     resetArm = setTimeout(() => { resetArm = 0; resetBtn.textContent = 'reset high score'; }, 2500);
   }
 });
+function applyCharUI() {
+  pickJade.classList.toggle('selected', selChar === 'jade');
+  pickDarling.classList.toggle('selected', selChar === 'darling');
+  pickJade.setAttribute('aria-pressed', String(selChar === 'jade'));
+  pickDarling.setAttribute('aria-pressed', String(selChar === 'darling'));
+}
+function selectChar(id) {
+  SFX.ensure();
+  if (!CHARS[id] || selChar === id) return;
+  selChar = id;
+  store.set('fj_char', id);
+  SFX.click();
+  applyCharUI();
+}
+pickJade.addEventListener('click', () => { selectChar('jade'); pickJade.blur(); });
+pickDarling.addEventListener('click', () => { selectChar('darling'); pickDarling.blur(); });
 
 /* ─── Main loop (delta-time; clamped so pauses/hiccups can't teleport the bird) ─── */
 let last = performance.now();
@@ -960,13 +1034,14 @@ if (document.fonts && document.fonts.load) {
 layout();
 checkOrientation();
 updateMenuBest();
+applyCharUI();
 muteBtn.textContent = SFX.muted ? '🔇' : '🔊';
 requestAnimationFrame(tick);
 
 /* Tiny debug/test handle (harmless in production) */
 window.FJ = {
   get: () => ({
-    state, started, dying, awaitResume, blocked, score, level, speed,
+    state, started, dying, awaitResume, blocked, score, level, speed, char: selChar,
     bird: { x: bird.x, y: bird.y, vy: bird.vy },
     pipes: pipes.map(p => ({ x: p.x, gapY: p.gapY, gapH: p.gapH })),
   }),

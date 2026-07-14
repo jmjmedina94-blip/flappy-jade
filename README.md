@@ -1,6 +1,6 @@
 # Flappy Jade 👑
 
-A sparkly, princess-themed take on Flappy Bird. Tap anywhere to flap, fly the tiara-wearing pink bird through the candy columns, and level up every 10 points as the sky shifts from morning pinks to a starry night.
+A sparkly, princess-themed take on Flappy Bird. Pick your bird — **Jade** (pink, tiara) or **Darling** (blue, crown) — then tap anywhere to flap through the candy columns and level up every 10 points as the sky shifts from morning pinks to a starry night.
 
 Built as a **pure static site** — just three files, no installs, no build step, nothing to maintain:
 
@@ -71,6 +71,7 @@ Vercel works the same way at **https://vercel.com/new** if you prefer.
 ## Game details
 
 - **Controls:** tap / click / spacebar to flap
+- **Characters:** choose Jade or Darling on the menu — cosmetic only (same speed and hitbox), remembered on the device
 - **Levels:** every 10 points. Pipes get a little closer together in feel (smaller gap, faster scroll) and the scenery changes — sunset at level 2, twilight at level 3, starry night at level 4+
 - **High score:** saved on the device (localStorage), shown on the menu and game-over screens. Reset from the menu.
 - **Mobile:** designed for landscape. In portrait it shows a "rotate your phone" screen and pauses. No scrolling/zooming interference; sound (tiny generated chimes, no files) starts after the first tap and can be muted with the 🔊 button.

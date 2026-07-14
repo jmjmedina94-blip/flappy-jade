@@ -148,6 +148,49 @@ body {
 }
 .btn[disabled] { opacity: 0.55; pointer-events: none; }
 
+/* ─── Character select ─── */
+
+.chooseLabel {
+  margin-top: calc(var(--u) * 2);
+  font-size: calc(var(--u) * 2.8);
+  font-weight: 600;
+  color: rgba(255, 240, 250, 0.9);
+  text-shadow: 0 2px 3px rgba(90, 30, 90, 0.45);
+  letter-spacing: 0.06em;
+}
+.charRow { display: flex; gap: calc(var(--u) * 3); margin-top: calc(var(--u) * 1.2); }
+.charBtn {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1.6);
+  font-size: calc(var(--u) * 3.6);
+  font-weight: 600;
+  color: #fff;
+  padding: calc(var(--u) * 1.4) calc(var(--u) * 4);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  border: calc(var(--u) * 0.45) solid rgba(255, 255, 255, 0.35);
+  text-shadow: 0 2px 0 rgba(120, 40, 90, 0.4);
+  transition: transform 0.12s, background 0.2s, border-color 0.2s, box-shadow 0.2s;
+  touch-action: manipulation;
+}
+.charBtn .dot {
+  width: calc(var(--u) * 3.2);
+  height: calc(var(--u) * 3.2);
+  border-radius: 50%;
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.15), 0 1px 3px rgba(60, 10, 60, 0.3);
+}
+.charBtn.jade .dot { background: radial-gradient(circle at 35% 30%, #ffd3e8, #f06ba8); }
+.charBtn.darling .dot { background: radial-gradient(circle at 35% 30%, #c4e0ff, #5f8fe6); }
+.charBtn.selected {
+  background: rgba(255, 255, 255, 0.42);
+  border-color: #ffd166;
+  box-shadow: 0 0 calc(var(--u) * 2.5) rgba(255, 209, 102, 0.55),
+              0 calc(var(--u) * 0.8) calc(var(--u) * 1.6) rgba(60, 10, 60, 0.35);
+  transform: scale(1.06);
+}
+@media (hover: hover) { .charBtn:not(.selected):hover { background: rgba(255, 255, 255, 0.3); } }
+
 .chip {
   position: absolute;
   top: calc(var(--u) * 3);
